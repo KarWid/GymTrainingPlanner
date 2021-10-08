@@ -37,7 +37,7 @@ namespace GymTrainingPlanner.Api
             services.ConfigureSwagger();
             services.ConfigureIdentityOptions(); // TODO: to check if needed
             services.AddJwtAuthorization(Configuration);
-            services.AddDbContext(Configuration);
+            services.AddDbContext();
 
             // services
             services.AddScoped<ITimeService, TimeService>();

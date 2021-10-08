@@ -3,12 +3,12 @@
     using Microsoft.EntityFrameworkCore;
     using GymTrainingPlanner.Repositories.EntityFramework.Entities;
 
-    public class ExerciseConfiguration
+    public class ExerciseDefinitionConfiguration
     {
         public static void Configure(ModelBuilder builder)
         {
             builder
-                .Entity<ExerciseEntity>()
+                .Entity<ExerciseDefinitionEntity>()
                 .HasMany<ExerciseDetailEntity>()
                 .WithOne(_ => _.Exercise)
                 .HasForeignKey(_ => _.ExcerciseId)
@@ -16,7 +16,7 @@
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder
-                .Entity<ExerciseEntity>()
+                .Entity<ExerciseDefinitionEntity>()
                 .HasOne<LookupEntity>()
                 .WithMany(_ => _.Exercises)
                 .HasForeignKey(_ => _.ExerciseNameId);

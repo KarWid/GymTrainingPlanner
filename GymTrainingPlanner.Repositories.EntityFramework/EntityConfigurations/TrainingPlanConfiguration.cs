@@ -16,7 +16,7 @@
 
             builder
                 .Entity<TrainingPlanEntity>()
-                .HasMany<TrainingDayEntity>()
+                .HasMany<TrainingDayDefinitionEntity>()
                 .WithOne(_ => _.TrainingPlan)
                 .HasForeignKey(_ => _.TrainingPlanId)
                 .IsRequired()

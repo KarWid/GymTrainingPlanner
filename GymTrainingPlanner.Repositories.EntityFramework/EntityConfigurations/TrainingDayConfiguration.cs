@@ -8,8 +8,8 @@
         public static void Configure(ModelBuilder builder)
         {
             builder
-                .Entity<TrainingDayEntity>()
-                .HasMany<ExerciseEntity>()
+                .Entity<TrainingDayDefinitionEntity>()
+                .HasMany<ExerciseDefinitionEntity>()
                 .WithOne(_ => _.TrainingDay)
                 .HasForeignKey(_ => _.TrainingDayId)
                 .IsRequired()

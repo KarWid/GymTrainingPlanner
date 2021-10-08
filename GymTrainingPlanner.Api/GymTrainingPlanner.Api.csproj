@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GymTrainingPlanner.Enums\GymTrainingPlanner.Enums.csproj" />
+    <ProjectReference Include="..\GymTrainingPlanner.Common\GymTrainingPlanner.Common.csproj" />
     <ProjectReference Include="..\GymTrainingPlanner.Repositories.EntityFramework\GymTrainingPlanner.Repositories.EntityFramework.csproj" />
   </ItemGroup>
 

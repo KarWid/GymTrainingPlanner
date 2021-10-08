@@ -13,6 +13,6 @@ namespace GymTrainingPlanner.Repositories.EntityFramework.Entities
         public string AdditionalInformation { get; set; }
 
         public long ExcerciseId { get; set; }
-        public virtual ExerciseEntity Exercise { get; set; }
+        public virtual ExerciseDefinitionEntity Exercise { get; set; }
     }
 }

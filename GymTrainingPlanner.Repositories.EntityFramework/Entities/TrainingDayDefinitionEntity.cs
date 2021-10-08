@@ -3,13 +3,13 @@
     using System;
     using System.Collections.Generic;
 
-    public class TrainingDayEntity : BaseEntity<int>
+    public class TrainingDayDefinitionEntity : BaseEntity<int>
     {
         public DayOfWeek DayOfWeek { get; set; }
 
         public int TrainingPlanId { get; set; }
         public virtual TrainingPlanEntity TrainingPlan { get; set; }
 
-        public virtual IEnumerable<ExerciseEntity> Exercises { get; set; } 
+        public virtual IEnumerable<ExerciseDefinitionEntity> Exercises { get; set; } 
     }
 }

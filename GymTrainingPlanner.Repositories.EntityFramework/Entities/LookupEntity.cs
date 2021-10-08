@@ -14,6 +14,6 @@
         public bool IsActive { get; set; }
         public DateTimeOffset ActiveTo { get; set; }
 
-        public virtual IEnumerable<ExerciseEntity> Exercises { get; set; }
+        public virtual IEnumerable<ExerciseDefinitionEntity> Exercises { get; set; }
     }
 }

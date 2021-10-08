@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>API</h1>
+    <div>
+        <div>
+            <h2>Użytkownicy</h2>
+            <div>
+                <ul>
+                    <li><b>Założenie konta:</b> Potrzebujemy email oraz hasło</li>
+                    <li><b>Autoryzacja:</b> Email oraz hasło</li>
+                    <li><b>Pobranie informacji o aktywnym użytkowniku:</b> Imie, Nazwisko</li>
+                    <li><b>Zapisanie informacji aktywnego użytkownika:</b> Imie, Nazwisko</li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <h2>Plan treningowy</h2>
+            <div>
+                <ul>
+                    <li><b>Utworzenie planu treningowego:</b> Wybranie typu planu, wpisanie nazwy planu i daty od do</li>
+                    <li><b>Pobranie informacji o aktywnym planie treningowym</b> Informacja o aktywnym planie treningowym</li>
+                    <li><b>Pobranie wszystkich istniejących planów treningowych danego użytkownika</b></li>
+                    <li><b>Usunięcie planu treningowego</b></li>
+                    <li><b>Aktualizacja planu treningowego:</b> Nazwa, od, do</li>
+                    <li><b>Generowanie planu treningowego:</b>
+                        <div>
+                            Gdy plan jest kompletny, wtedy włączona jest możliwość generowania planu treningowego na kolejny miesiąc na podstawie podanych maksymalnych ciężarów,
+                            a także sugerowane ciężary w ćwiczeniach akcesoryjnych na podstawie danych z poprzedniego miesiąca.
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <h2>Dzień treningowy - definicja</h2>
+            <div>
+                <ul>
+                    <li>    
+                        <b>
+                            Utworzenie dnia treningowego dla konkretnego planu treningowego włącznie z definicją ćwiczeń.
+                            Jeden dzień treningowy zawiera:
+                        </b> 
+                        <div>
+                            <ul>
+                                <li>Dzień w tygodniu, np. poniedziałek</li>
+                                <li>Listę ćwiczeń zdefiniowaną dla tego dnia oraz liczbę serii dla każdego ćwiczenia.</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><b>Pobranie definicji dnia treningowego:</b> Dzień tygodnia, zdefiniowane ćwiczenia oraz liczbę serii</li>
+                    <li><b>Edycję dnia treningowego:</b> Zmiana dnia treningowego, zmiana ćwiczeń lub ilości serii</li>
+                    <li><b>Pobranie szczegółów dla konkretnego dnia treningowego:</b> takich jak oczekiwane ciężary na zdefiniowaną liczbę serii w konkretnych ćwiczeniach</li>
+                    <li>
+                        <b>Zapisanie progresu konkretnego treningu dla dnia treningowego:</b> 
+                        Lista ćwiczeń, gdzie każde ćwiczenie ma listę wykonanych serii z ilością powtórzeń oraz ciężarem i ew. opisem
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

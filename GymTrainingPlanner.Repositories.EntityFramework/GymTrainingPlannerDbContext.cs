@@ -9,9 +9,9 @@
     public class GymTrainingPlannerDbContext : IdentityDbContext<AppUserEntity, AppRoleEntity, Guid>
     {
         public DbSet<ExerciseDetailEntity> ExerciseDetails { get; set; }
-        public DbSet<ExerciseEntity> Exercises { get; set; }
+        public DbSet<ExerciseDefinitionEntity> Exercises { get; set; }
         public DbSet<LookupEntity> Lookups { get; set; }
-        public DbSet<TrainingDayEntity> TrainingDays { get; set; }
+        public DbSet<TrainingDayDefinitionEntity> TrainingDays { get; set; }
         public DbSet<TrainingPlanEntity> TrainingPlans { get; set; }
 
         public GymTrainingPlannerDbContext(DbContextOptions options) : base(options) { }
@@ -21,7 +21,7 @@
             base.OnModelCreating(builder);
 
             AppUserConfiguration.Configure(builder);
-            ExerciseConfiguration.Configure(builder);
+            ExerciseDefinitionConfiguration.Configure(builder);
             LookupConfiguration.Configure(builder);
             TrainingDayConfiguration.Configure(builder);
             TrainingPlanConfiguration.Configure(builder);

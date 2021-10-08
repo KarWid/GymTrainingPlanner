@@ -12,6 +12,6 @@
 
         public virtual AppUserEntity User {get; set;}
 
-        public virtual IEnumerable<TrainingDayEntity> TrainingDays { get; set; }
+        public virtual IEnumerable<TrainingDayDefinitionEntity> TrainingDays { get; set; }
     }
 }

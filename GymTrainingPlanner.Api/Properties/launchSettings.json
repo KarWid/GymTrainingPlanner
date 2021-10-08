@@ -35,7 +35,8 @@
       "launchBrowser": true,
       "launchUrl": "https://gym-training-planner-api.com",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "GYM_TRAINING_PLANNER": "Server=127.0.0.1; Port=5432; Database=GymTrainingPlanner; User Id=GymTrainingPlannerUser; Password=SomePassword123."
       }
     }
   }
