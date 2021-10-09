@@ -7,13 +7,16 @@
     {
         [Key]
         public T Id { get; set; }
+    }
 
+    public class ExtendedBaseEntity<T> : BaseEntity<T>
+    {
         public Guid ModifiedBy { get; set; }
 
         public Guid CreatedBy { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
 
-        public DateTime ModifiedAt { get; set; }
+        public DateTimeOffset? ModifiedAt { get; set; }
     }
 }

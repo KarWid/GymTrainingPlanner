@@ -4,14 +4,14 @@
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
     using GymTrainingPlanner.Repositories.EntityFramework.Entities;
-    using GymTrainingPlanner.Repositories.EntityFramework.EntityConfigurations;
+    using GymTrainingPlanner.Repositories.EntityFramework.Configurations;
 
     public class GymTrainingPlannerDbContext : IdentityDbContext<AppUserEntity, AppRoleEntity, Guid>
     {
-        public DbSet<ExerciseDetailEntity> ExerciseDetails { get; set; }
-        public DbSet<ExerciseDefinitionEntity> Exercises { get; set; }
+        public DbSet<ExerciseDefinitionEntity> ExerciseDefinitions { get; set; }
         public DbSet<LookupEntity> Lookups { get; set; }
-        public DbSet<TrainingDayDefinitionEntity> TrainingDays { get; set; }
+        public DbSet<TrainingDayDefinitionEntity> TrainingDayDefinitions { get; set; }
+        public DbSet<TrainingEntity> Trainings { get; set; }
         public DbSet<TrainingPlanEntity> TrainingPlans { get; set; }
 
         public GymTrainingPlannerDbContext(DbContextOptions options) : base(options) { }
@@ -20,10 +20,11 @@
         {
             base.OnModelCreating(builder);
 
-            AppUserConfiguration.Configure(builder);
+            builder.HasPostgresExtension("uuid-ossp");
+
             ExerciseDefinitionConfiguration.Configure(builder);
-            LookupConfiguration.Configure(builder);
-            TrainingDayConfiguration.Configure(builder);
+            TrainingConfiguration.Configure(builder);
+            TrainingDayDefinitionConfiguration.Configure(builder);
             TrainingPlanConfiguration.Configure(builder);
         }
     }

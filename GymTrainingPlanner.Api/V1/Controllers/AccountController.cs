@@ -30,10 +30,10 @@
                 return BadRequest(ModelState);
             }
 
-            var user = new AppUserEntity { Email = model.Email, EmailConfirmed = true };
+            var user = new AppUserEntity { Email = model.Email, EmailConfirmed = true, UserName = model.Email };
             var result = await _identityUserManager.CreateAsync(user, model.Password);
 
-            return Ok();
+            return Ok(result);
         }
 
         //[AllowAnonymous]

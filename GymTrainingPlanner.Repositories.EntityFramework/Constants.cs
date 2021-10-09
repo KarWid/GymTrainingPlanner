@@ -4,13 +4,19 @@
     {
         public static class Role
         {
-            public const string Admin = "Admin";
-            public const string Customer = "Customer";
+            public const string ADMIN = "Admin";
+            public const string CUSTOMER = "Customer";
         }
 
         public static class LookupGroupNames
         {
-            public const string ExcerciseName = "excercise-name";
+            public const string EXERCISE_NAME = "exercise-name";
+        }
+
+        public static class PostgresFunctions
+        {
+            public const string UUID_GENERATE_V4 = "uuid_generate_v4()";
+            public const string UUID_COLUMN_TYPE = "uuid";
         }
     }
 }
