@@ -1,16 +1,21 @@
 namespace GymTrainingPlanner.Api
 {
+    using FluentValidation.AspNetCore;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Logging;
     using GymTrainingPlanner.Api.Helpers;
     using GymTrainingPlanner.Api.Middleware;
-    using GymTrainingPlanner.Api.Managers.Impl;
     using GymTrainingPlanner.Api.Services;
+    using GymTrainingPlanner.Common.Models.Dtos.V1.Account;
+    using GymTrainingPlanner.Common.Managers.V1;
+    using GymTrainingPlanner.Common.Services;
+    using GymTrainingPlanner.Common.Helpers;
+    using GymTrainingPlanner.Repositories.EntityFramework.Entities;
+    using GymTrainingPlanner.Api.Providers;
 
     public class Startup
     {
@@ -25,30 +30,32 @@ namespace GymTrainingPlanner.Api
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddCors(); // TODO: to allow only for one url
-            services.AddControllers();
-
+            services.AddControllers()
+                .AddFluentValidation(_ => _.RegisterValidatorsFromAssembly(typeof(RegisterAccountInDTOValidator).Assembly));
+            
             services.AddApiVersioning(o =>
             {
                 o.DefaultApiVersion = new ApiVersion(1, 0);
                 o.AssumeDefaultVersionWhenUnspecified = true;
             });
 
+            ConfigureServicesFromHelpers(services);
+
             // Helpers
-            services.ConfigureSwagger();
-            services.ConfigureIdentityOptions(); // TODO: to check if needed
-            services.AddJwtAuthorization(Configuration);
-            services.AddDbContext();
+            services.AddSingleton<IConfigurationUtilitiesHelper, ConfigurationUtilitiesHelper>();
 
             // services
+            services.AddTransient<IEmailSenderService, TempEmailSenderService>();
+
             services.AddScoped<ITimeService, TimeService>();
             services.AddScoped<ITokenService, TokenService>();
 
             //managers
-            services.AddScoped<IUserManager, TempUserManager>();
+            services.AddScoped<IUserManager, AppUserManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env/*, ILoggerFactory loggerFactory*/)
         {
             if (env.IsDevelopment())
             {
@@ -78,6 +85,20 @@ namespace GymTrainingPlanner.Api
             });
             
             //loggerFactory.AddFile("Logs/GymTrainingPlanner-Api-{Date}.txt");
+        }
+
+        private void ConfigureServicesFromHelpers(IServiceCollection services)
+        {
+            services.ConfigureSwagger();
+            services.ConfigureIdentityOptions();
+            services.ConfigureApplicationCookies();
+            services.AddJwtAuthorization(Configuration);
+            services.AddDbContext();
+            services.ConfigureMapper();
+            services.AddLogging();
+            services.ConfigureSmtpClient();
+
+            services.AddTransient<CustomEmailConfirmationTokenProvider<AppUserEntity>>();
         }
     }
 }

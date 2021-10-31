@@ -7,7 +7,7 @@
     public class TrainingPlanEntity : ExtendedBaseEntity<Guid>
     {
         [Required]
-        [StringLength(50)]
+        [StringLength(Constants.StringLength.DEFAULT_SHORT_LENGTH)]
         public string Name { get; set; }
         public DateTimeOffset DateFrom { get; set; }
 

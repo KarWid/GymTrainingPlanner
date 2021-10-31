@@ -6,15 +6,15 @@
     public class LookupEntity : BaseEntity<int>
     {
         [Required]
-        [StringLength(100)]
+        [StringLength(Constants.StringLength.DEFAULT_SHORT_LENGTH)]
         public string Name { get; set; }
 
         [Required]
-        [StringLength(255)]
+        [StringLength(Constants.StringLength.DEFAULT_AVERAGE_LENGTH)]
         public string Value { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(Constants.StringLength.DEFAULT_SHORT_LENGTH)]
         public string GroupName { get; set; }
 
         public bool IsActive { get; set; }

@@ -117,16 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Email_Incorrect_Format" xml:space="preserve">
+  <data name="Account_ConfirmationToken_Invalid" xml:space="preserve">
+    <value>Confirmation token is invalid.</value>
+  </data>
+  <data name="Account_Email_Confirmed" xml:space="preserve">
+    <value>Email was successfully confirmed.</value>
+  </data>
+  <data name="Account_Email_Incorrect_Format" xml:space="preserve">
     <value>Email is in incorrect format.</value>
   </data>
-  <data name="Login_Password_InvalidFormat" xml:space="preserve">
-    <value>The Password should requires atleast: 8 characters, one uppercase, one lowercase, one non alphanumeric, one digit.</value>
+  <data name="Account_Email_Undefined" xml:space="preserve">
+    <value>Email is not defined.</value>
+  </data>
+  <data name="Account_NotFound" xml:space="preserve">
+    <value>Account was not found by provided email.</value>
+  </data>
+  <data name="Account_Password_InvalidFormat" xml:space="preserve">
+    <value>The Password requires atleast: 8 characters, one uppercase, one lowercase, one non alphanumeric, one digit.</value>
+  </data>
+  <data name="Account_Successfully_Created" xml:space="preserve">
+    <value>Account was successfully created.</value>
+  </data>
+  <data name="Email_ConfirmationEmail_Subject" xml:space="preserve">
+    <value>GymTrainingPlanner - Confirm your Email</value>
+  </data>
+  <data name="Invalid_Format_Letters_Only" xml:space="preserve">
+    <value>{PropertyName} can only contain only letters.</value>
   </data>
   <data name="Maximum_Length_Error" xml:space="preserve">
     <value>{PropertyName} must be less than {MaxLength} characters.</value>
   </data>
   <data name="Required" xml:space="preserve">
     <value>{PropertyName} is required.</value>
+  </data>
+  <data name="Something_Went_Wrong" xml:space="preserve">
+    <value>Something went wrong. Please, contact with us for more details.</value>
   </data>
 </root>

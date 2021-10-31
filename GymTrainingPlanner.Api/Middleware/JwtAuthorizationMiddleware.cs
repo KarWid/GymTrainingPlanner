@@ -57,7 +57,7 @@
 
         private static Task OnTokenValidated(TokenValidatedContext context)
         {
-            var userManager = context.HttpContext.RequestServices.GetRequiredService<IUserManager>();
+            var userManager = context.HttpContext.RequestServices.GetRequiredService<ITempUserManager>();
             var userId = Guid.Parse(context.Principal.Identity.Name);
             var user = userManager.GetById(userId); // TODO: to change to if exists
             if (user == null)

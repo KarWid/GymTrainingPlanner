@@ -30,8 +30,8 @@ namespace GymTrainingPlanner.Repositories.EntityFramework.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    FirstName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    LastName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    FirstName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    LastName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     Token = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -59,9 +59,9 @@ namespace GymTrainingPlanner.Repositories.EntityFramework.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Value = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    GroupName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    GroupName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>

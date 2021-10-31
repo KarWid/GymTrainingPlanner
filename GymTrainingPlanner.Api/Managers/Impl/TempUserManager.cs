@@ -6,14 +6,14 @@
     using GymTrainingPlanner.Api.Services;
     using GymTrainingPlanner.Repositories.EntityFramework.Entities;
 
-    public interface IUserManager
+    public interface ITempUserManager
     {
         AppUserEntity Authenticate(string username, string password);
         AppUserEntity GetById(Guid id);
         IEnumerable<AppUserEntity> GetAll();
     }
 
-    public class TempUserManager : IUserManager
+    public class TempUserManager : ITempUserManager
     {
         private List<AppUserEntity> _users = new List<AppUserEntity>
         {

@@ -9,7 +9,7 @@
 
         /// serialized object
         [Required]
-        [StringLength(4000)]
+        [StringLength(Constants.StringLength.DEFAULT_LONG_LENGTH)]
         public string Content { get; set; }
 
         /// <summary>

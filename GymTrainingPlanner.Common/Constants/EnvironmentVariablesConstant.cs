@@ -5,6 +5,8 @@
         public static class EnvironmentVariablesConstant
         {
             public static readonly string CONNECTION_STRING = "GYM_TRAINING_PLANNER_CONNECTION_STRING";
+            public static readonly string EMAIL_TEMP_DIRECTORY = "EMAIL_TEMP_DIRECTORY";
+            public static readonly string EMAIL_CONFIRMATION_TOKEN_LIFESPAN_HOURS = "EMAIL_CONFIRMATION_TOKEN_LIFESPAN_HOURS";
         }
     }
 }
