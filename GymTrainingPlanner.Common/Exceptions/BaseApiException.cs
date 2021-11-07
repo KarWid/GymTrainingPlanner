@@ -1,6 +1,7 @@
 ﻿namespace GymTrainingPlanner.Common.Exceptions
 {
     using System;
+    using System.Collections.Generic;
 
     public class BaseApiException : Exception
     {
@@ -11,6 +12,11 @@
         public virtual string GetErrorMessage()
         {
             return Message;
+        }
+
+        public virtual List<string> GetErrorMessages()
+        {
+            return new List<string> { Message };
         }
     }
 }

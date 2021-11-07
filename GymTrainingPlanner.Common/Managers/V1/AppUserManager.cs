@@ -1,5 +1,7 @@
 ﻿namespace GymTrainingPlanner.Common.Managers.V1
 {
+    using System.Linq;
+    using System.Security.Claims;
     using System.Threading.Tasks;
     using AutoMapper;
     using Microsoft.AspNetCore.Identity;
@@ -8,6 +10,7 @@
     using GymTrainingPlanner.Common.Models.Dtos.V1.Account;
     using GymTrainingPlanner.Common.Services;
     using GymTrainingPlanner.Common.Resources;
+    using GymTrainingPlanner.Repositories.EntityFramework.Enums;
 
     public interface IUserManager
     {
@@ -17,7 +20,7 @@
         /// <param name="model"></param>
         /// <param name="emailConfirmationToken"></param>
         /// <returns></returns>
-        Task<RegisterAccountOutDTO> CreateAccountAsync(RegisterAccountInDTO model);
+        Task<RegisterAccountResponse> CreateUserAccountAsync(RegisterAccountRequest model);
         
         /// <summary>
         /// Sends confirmation email with confirmation url to a user's email defined by userEmail.
@@ -38,7 +41,20 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <returns>Determines if authentication succeeded.</returns>
+        Task<UserAccount> AuthenticateAsync(AuthenticateRequest model);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="claimsPrincipal"></param>
         /// <returns></returns>
+        Task<UserAccount> GetUserAsync(ClaimsPrincipal claimsPrincipal);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>Logouts a current user.</returns>
         Task SignOut();
     }
 
@@ -63,17 +79,23 @@
 
         #region Public Methods
         /// <inheritdoc cref="IUserManager"/>
-        public async Task<RegisterAccountOutDTO> CreateAccountAsync(RegisterAccountInDTO model)
+        public async Task<RegisterAccountResponse> CreateUserAccountAsync(RegisterAccountRequest model)
         {
             var appUserEntity = _mapper.Map<AppUserEntity>(model);
 
             var createAccountResult = await _identityUserManager.CreateAsync(appUserEntity, model.Password);
             if (!createAccountResult.Succeeded)
             {
-                throw new IdentityApiException(createAccountResult.Errors);
+                throw new IdentityApiException(createAccountResult.Errors.ToList());
             }
 
-            var result = _mapper.Map<RegisterAccountOutDTO>(appUserEntity);
+            var addToRoleResult = await _identityUserManager.AddToRoleAsync(appUserEntity, AppRoleType.User.ToString());
+            if (!addToRoleResult.Succeeded)
+            {
+                throw new IdentityApiException(createAccountResult.Errors.ToList());
+            }
+
+            var result = _mapper.Map<RegisterAccountResponse>(appUserEntity);
             result.EmailConfirmationToken = await _identityUserManager.GenerateEmailConfirmationTokenAsync(appUserEntity);
 
             return result;
@@ -110,10 +132,37 @@
             var result = await _identityUserManager.ConfirmEmailAsync(user, confirmationToken);
             if (!result.Succeeded)
             {
-                throw new IdentityApiException(result.Errors);
+                throw new IdentityApiException(result.Errors.ToList());
             }
 
             return true;
+        }
+
+        /// <inheritdoc cref="IUserManager"/>
+        public async Task<UserAccount> AuthenticateAsync(AuthenticateRequest model)
+        {
+            await ValidateAuthenticateRequestAsync(model);
+
+            var appUserEntity = await _identityUserManager.FindByNameAsync(model.Email);
+
+            return await GetUserAccountAsync(appUserEntity);
+        }
+
+        public async Task<UserAccount> GetUserAsync(ClaimsPrincipal claimsPrincipal)
+        {
+            var userId = claimsPrincipal.Claims.FirstOrDefault(_ => _.Type == ClaimTypes.NameIdentifier).Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return null;
+            }
+
+            var userAccountEntity = await _identityUserManager.FindByIdAsync(userId);
+            if (userAccountEntity == null)
+            {
+                return null;
+            }
+
+            return await GetUserAccountAsync(userAccountEntity);
         }
 
         /// <inheritdoc cref="IUserManager"/>
@@ -127,6 +176,37 @@
         private string GetBodyForConfirmationEmail(string confirmationUrl)
         {
             return $"Press this url {confirmationUrl} to confirm your email address.";
+        }
+
+        private async Task ValidateAuthenticateRequestAsync(AuthenticateRequest authenticateRequest)
+        {
+            var passwordSignInResult = await _signInManager.PasswordSignInAsync(
+                authenticateRequest.Email, authenticateRequest.Password, true, false);
+
+            if (!passwordSignInResult.Succeeded)
+            {
+                if (passwordSignInResult.IsLockedOut)
+                {
+                    throw new ApiManagerException(GeneralResource.Account_Locked);
+                }
+
+                if (passwordSignInResult.IsNotAllowed)
+                {
+                    throw new ApiManagerException(GeneralResource.Account_Authenticate_NotAllowed);
+                }
+
+                throw new ApiManagerException(GeneralResource.Account_Authenticate_WrongCredentials);
+            }
+        }
+
+        private async Task<UserAccount> GetUserAccountAsync(AppUserEntity appUserEntity)
+        {
+            var roleNames = await _identityUserManager.GetRolesAsync(appUserEntity);
+
+            var result = _mapper.Map<UserAccount>(appUserEntity);
+            result.RoleNames = roleNames.ToList();
+
+            return result;
         }
         #endregion
     }

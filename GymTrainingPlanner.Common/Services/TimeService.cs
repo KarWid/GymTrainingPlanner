@@ -1,4 +1,4 @@
-﻿namespace GymTrainingPlanner.Api.Services
+﻿namespace GymTrainingPlanner.Common.Services
 {
     using System;
 

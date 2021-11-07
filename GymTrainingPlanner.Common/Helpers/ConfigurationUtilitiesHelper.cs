@@ -7,6 +7,8 @@
     {
         string ConnectionString { get; }
         string EmailTemporaryDirectory { get; }
+
+        string GymTrainingPlannerJwtKey { get; }
     }
 
     public class ConfigurationUtilitiesHelper : IConfigurationUtilitiesHelper
@@ -33,6 +35,20 @@
                 if (string.IsNullOrEmpty(result))
                 {
                     throw new Exception("Email temporary directory is not defined.");
+                }
+
+                return result;
+            }
+        }
+
+        public string GymTrainingPlannerJwtKey
+        {
+            get
+            {
+                var result = Environment.GetEnvironmentVariable(Constant.EnvironmentVariablesConstant.GYM_TRAINING_PLANNER_JWT_KEY);
+                if (string.IsNullOrEmpty(result))
+                {
+                    throw new Exception("JWT Key is not defined.");
                 }
 
                 return result;

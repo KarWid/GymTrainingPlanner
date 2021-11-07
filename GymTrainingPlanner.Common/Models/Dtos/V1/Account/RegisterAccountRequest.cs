@@ -6,7 +6,7 @@
     using RepositoryConstant = GymTrainingPlanner.Repositories.EntityFramework.Constants;
     using CommonConstant = GymTrainingPlanner.Common.Constants.Constant;
 
-    public class RegisterAccountInDTO
+    public class RegisterAccountRequest
     {
         public string Email { get; set; }
         public string Password { get; set; }
@@ -14,9 +14,9 @@
         public string LastName { get; set; }
     }
 
-    public class RegisterAccountInDTOValidator : AbstractValidator<RegisterAccountInDTO>
+    public class RegisterAccountRequestValidator : AbstractValidator<RegisterAccountRequest>
     {
-        public RegisterAccountInDTOValidator()
+        public RegisterAccountRequestValidator()
         {
             RuleFor(_ => _.Email)
                 .NotNullMaximumLength(RepositoryConstant.StringLength.DEFAULT_AVERAGE_LENGTH)

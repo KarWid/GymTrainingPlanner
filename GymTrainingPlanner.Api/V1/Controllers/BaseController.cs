@@ -5,9 +5,31 @@
     using Microsoft.Extensions.Logging;
     using GymTrainingPlanner.Common.Exceptions;
     using GymTrainingPlanner.Common.Resources;
+    using GymTrainingPlanner.Common.Models.Responses;
+    using GymTrainingPlanner.Common.Models.Dtos.V1.Account;
+    using GymTrainingPlanner.Common.Extensions;
+    using GymTrainingPlanner.Common.Constants;
 
     public class BaseController : ControllerBase
     {
+        private UserAccount _currentUser;
+
+        protected UserAccount CurrentUser
+        {
+            get
+            {
+                if (_currentUser == null && HttpContext.Items[Constant.HttpContext.CurrentUser] is UserAccount userAccount)
+                {
+                    if (userAccount != null && !userAccount.Id.IsEmpty())
+                    {
+                        _currentUser = userAccount;
+                    }
+                }
+
+                return _currentUser;
+            }
+        }
+
         protected readonly ILogger _logger;
 
         public BaseController(ILogger logger)
@@ -15,36 +37,47 @@
             _logger = logger;
         }
 
+        protected OkObjectResult Ok<T>(T value)
+        {
+            return base.Ok(new SuccessApiResponse<T>(value));
+        }
+
         protected IActionResult HandleException(Exception ex, string description)
         {
             LogErrorMessage(ex, description);
 
-            if (ex is IdentityApiException)
+            if (ex is NotFoundApiManagerException notFoundApiManagerException)
             {
-                var identityApiException = ex as IdentityApiException;
-                return BadRequest(identityApiException.GetErrorMessage());
+                return NotFound(new NotFoundApiResponse(notFoundApiManagerException.Message));
             }
 
-            if (ex is BaseApiException)
+            if (ex is ApiManagerException apiManagerException)
             {
-                var apiException = ex as BaseApiException;
-                return BadRequest(apiException.Message);
+                return BadRequest(new BussinessLogicErrorApiResponse(apiManagerException.Message));
             }
 
-            return BadRequest(GeneralResource.Something_Went_Wrong);
+            if (ex is IdentityApiException identityApiException)
+            {
+                return BadRequest(new BussinessLogicErrorApiResponse(identityApiException.GetErrorMessages()));
+            }
+
+            if (ex is BaseApiException baseApiException)
+            {
+                return BadRequest(new BussinessLogicErrorApiResponse(baseApiException.Message));
+            }
+
+            return BadRequest(new BussinessLogicErrorApiResponse(GeneralResource.Something_Went_Wrong));
         }
 
         protected void LogErrorMessage(Exception ex, string description)
         {
-            if (ex is BaseApiException)
+            if (ex is BaseApiException baseApiException)
             {
-                var baseApiException = ex as BaseApiException;
                 _logger.LogError(baseApiException.GetErrorMessage(), description);
+                return;
             }
-            else
-            {
-                _logger.LogError(ex, description);
-            }
+
+            _logger.LogError(ex, description);
         }
     }
 }

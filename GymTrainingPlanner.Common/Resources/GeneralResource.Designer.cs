@@ -61,6 +61,33 @@ namespace GymTrainingPlanner.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Authentication failed..
+        /// </summary>
+        public static string Account_Authenticate_Failed {
+            get {
+                return ResourceManager.GetString("Account_Authenticate_Failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your account is not allowed to authenticate. Make sure that your email is confirmed..
+        /// </summary>
+        public static string Account_Authenticate_NotAllowed {
+            get {
+                return ResourceManager.GetString("Account_Authenticate_NotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Credentials are wrong..
+        /// </summary>
+        public static string Account_Authenticate_WrongCredentials {
+            get {
+                return ResourceManager.GetString("Account_Authenticate_WrongCredentials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Confirmation token is invalid..
         /// </summary>
         public static string Account_ConfirmationToken_Invalid {
@@ -93,6 +120,15 @@ namespace GymTrainingPlanner.Common.Resources {
         public static string Account_Email_Undefined {
             get {
                 return ResourceManager.GetString("Account_Email_Undefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your account is locked..
+        /// </summary>
+        public static string Account_Locked {
+            get {
+                return ResourceManager.GetString("Account_Locked", resourceCulture);
             }
         }
         
@@ -165,6 +201,15 @@ namespace GymTrainingPlanner.Common.Resources {
         public static string Something_Went_Wrong {
             get {
                 return ResourceManager.GetString("Something_Went_Wrong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unauthorized.
+        /// </summary>
+        public static string Unauthorized {
+            get {
+                return ResourceManager.GetString("Unauthorized", resourceCulture);
             }
         }
     }

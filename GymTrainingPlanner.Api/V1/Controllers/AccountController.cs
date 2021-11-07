@@ -2,37 +2,42 @@
 {
     using System;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using GymTrainingPlanner.Common.Managers.V1;
     using GymTrainingPlanner.Common.Models.Dtos.V1.Account;
     using GymTrainingPlanner.Common.Resources;
+    using GymTrainingPlanner.Api.Services;
+    using GymTrainingPlanner.Common.Models.Responses;
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController, ApiVersion("1.0")]
     [Produces("application/json")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class AccountController : BaseController
     {
         private readonly IUserManager _userManager;
+        private readonly IJwtTokenService _jwtTokenService;
 
         public AccountController(
-            ILogger<AccountController> logger,
-            IUserManager userManager)
+            ILogger<AccountController> logger, 
+            IUserManager userManager,
+            IJwtTokenService jwtTokenService)
             :base (logger)
         {
             _userManager = userManager;
+            _jwtTokenService = jwtTokenService;
         }
 
-        [AllowAnonymous]
+        [ProducesResponseType(typeof(ApiResponse<RegisterAccountResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterAccountInDTO model)
+        public async Task<IActionResult> Register([FromBody]RegisterAccountRequest model)
         {
             try
             {
-                var result = await _userManager.CreateAccountAsync(model);
+                var result = await _userManager.CreateUserAccountAsync(model);
                 var confirmationUrl = GetEmailConfirmationUrl(result.UserId, result.EmailConfirmationToken);
                 await _userManager.SendConfirmationEmailAsync(result.Email, confirmationUrl);
 
@@ -44,9 +49,9 @@
             }
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        [Route("ConfirmEmail")]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [HttpGet, Route("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
             try
@@ -60,8 +65,7 @@
             }
         }
 
-        [Route("Logout")]
-        [HttpGet]
+        [HttpGet, Route("Logout")]
         public async Task<IActionResult> Logout()
         {
             // TODO @KWidla: to analyze
@@ -71,10 +75,27 @@
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Account - SignOut - GET");
+                return HandleException(ex, "Account - Logout - GET");
             }
 
             return Ok();
+        }
+
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [HttpPost, Route("Authenticate")]
+        public async Task<IActionResult> Authenticate([FromBody]AuthenticateRequest authenticateRequest)
+        {
+            try
+            {
+                var account = await _userManager.AuthenticateAsync(authenticateRequest);
+                var authenticationToken = _jwtTokenService.GenerateNewToken(account);
+                return Ok(new { AuthorizationToken = authenticationToken });
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Account - Authenticate - POST");
+            }
         }
 
         private string GetEmailConfirmationUrl(Guid userId, string emailConfirmationToken)
@@ -85,28 +106,5 @@
                 new { userId = userId, token = emailConfirmationToken }, 
                 Request.Scheme);
         }
-
-        //[AllowAnonymous]
-        //public IActionResult Authenticate()
-        //{
-        //    var user = _userManager.Authenticate("test", "test");
-
-        //    if (user == null)
-        //    {
-        //        return BadRequest(new { message = "Username or password is incorrect" });
-        //    }
-
-        //    return Ok(user);
-        //}
-
-        //[HttpGet("getall")]
-        //public IActionResult GetAll()
-        //{
-        //    var result = _userManager.GetAll();
-
-        //    var id = new Guid((string)User.Identity.Name);
-
-        //    return Ok(result);
-        //}
     }
 }

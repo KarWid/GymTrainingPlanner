@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class RegisterAccountOutDTO
+    public class RegisterAccountResponse
     {
         public string Email { get; set; }
         public Guid UserId { get; set; }

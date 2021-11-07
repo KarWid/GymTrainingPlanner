@@ -1,12 +1,13 @@
 namespace GymTrainingPlanner.Api
 {
-    using FluentValidation.AspNetCore;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using FluentValidation.AspNetCore;
     using GymTrainingPlanner.Api.Helpers;
     using GymTrainingPlanner.Api.Middleware;
     using GymTrainingPlanner.Api.Services;
@@ -16,6 +17,7 @@ namespace GymTrainingPlanner.Api
     using GymTrainingPlanner.Common.Helpers;
     using GymTrainingPlanner.Repositories.EntityFramework.Entities;
     using GymTrainingPlanner.Api.Providers;
+    using GymTrainingPlanner.Repositories.EntityFramework.SeedData;
 
     public class Startup
     {
@@ -31,7 +33,7 @@ namespace GymTrainingPlanner.Api
         {
             //services.AddCors(); // TODO: to allow only for one url
             services.AddControllers()
-                .AddFluentValidation(_ => _.RegisterValidatorsFromAssembly(typeof(RegisterAccountInDTOValidator).Assembly));
+                .AddFluentValidation(_ => _.RegisterValidatorsFromAssembly(typeof(RegisterAccountRequestValidator).Assembly));
             
             services.AddApiVersioning(o =>
             {
@@ -41,21 +43,18 @@ namespace GymTrainingPlanner.Api
 
             ConfigureServicesFromHelpers(services);
 
-            // Helpers
-            services.AddSingleton<IConfigurationUtilitiesHelper, ConfigurationUtilitiesHelper>();
-
             // services
             services.AddTransient<IEmailSenderService, TempEmailSenderService>();
 
             services.AddScoped<ITimeService, TimeService>();
-            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
 
             //managers
             services.AddScoped<IUserManager, AppUserManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env/*, ILoggerFactory loggerFactory*/)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<AppRoleEntity> roleManager /*, ILoggerFactory loggerFactory*/)
         {
             if (env.IsDevelopment())
             {
@@ -79,6 +78,8 @@ namespace GymTrainingPlanner.Api
             app.UseAuthentication();
             app.UseAuthorization();
 
+            IdentityDataInitializer.SeedData(roleManager);
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
@@ -89,6 +90,8 @@ namespace GymTrainingPlanner.Api
 
         private void ConfigureServicesFromHelpers(IServiceCollection services)
         {
+            services.AddSingleton<IConfigurationUtilitiesHelper, ConfigurationUtilitiesHelper>();
+
             services.ConfigureSwagger();
             services.ConfigureIdentityOptions();
             services.ConfigureApplicationCookies();
