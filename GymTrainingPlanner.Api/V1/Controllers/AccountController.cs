@@ -4,7 +4,6 @@
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
     using GymTrainingPlanner.Common.Managers.V1;
     using GymTrainingPlanner.Common.Models.Dtos.V1.Account;
     using GymTrainingPlanner.Common.Resources;
@@ -20,11 +19,7 @@
         private readonly IUserManager _userManager;
         private readonly IJwtTokenService _jwtTokenService;
 
-        public AccountController(
-            ILogger<AccountController> logger, 
-            IUserManager userManager,
-            IJwtTokenService jwtTokenService)
-            :base (logger)
+        public AccountController(IUserManager userManager, IJwtTokenService jwtTokenService)
         {
             _userManager = userManager;
             _jwtTokenService = jwtTokenService;
@@ -35,18 +30,13 @@
         [HttpPost]
         public async Task<IActionResult> Register([FromBody]RegisterAccountRequest model)
         {
-            try
-            {
-                var result = await _userManager.CreateUserAccountAsync(model);
-                var confirmationUrl = GetEmailConfirmationUrl(result.UserId, result.EmailConfirmationToken);
-                await _userManager.SendConfirmationEmailAsync(result.Email, confirmationUrl);
+            // TODO @KWidla - change models, ideally it would be when you return RegisterAccountResponse,
+            // get RegisterAccountRequest, but service uses model e.g. Account
+            var result = await _userManager.CreateUserAccountAsync(model);
+            var confirmationUrl = GetEmailConfirmationUrl(result.UserId, result.EmailConfirmationToken);
+            await _userManager.SendConfirmationEmailAsync(result.Email, confirmationUrl);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Account - Register - POST");
-            }
+            return Ok(result);
         }
 
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status200OK)]
@@ -54,31 +44,8 @@
         [HttpGet, Route("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
-            try
-            {
-                await _userManager.ConfirmEmailAsync(email, token);
-                return Ok(GeneralResource.Account_Email_Confirmed);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Account - ConfirmEmail - Get");
-            }
-        }
-
-        [HttpGet, Route("Logout")]
-        public async Task<IActionResult> Logout()
-        {
-            // TODO @KWidla: to analyze
-            try
-            {
-                await _userManager.SignOut();
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Account - Logout - GET");
-            }
-
-            return Ok();
+            await _userManager.ConfirmEmailAsync(email, token);
+            return Ok(GeneralResource.Account_Email_Confirmed);
         }
 
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
@@ -86,16 +53,9 @@
         [HttpPost, Route("Authenticate")]
         public async Task<IActionResult> Authenticate([FromBody]AuthenticateRequest authenticateRequest)
         {
-            try
-            {
-                var account = await _userManager.AuthenticateAsync(authenticateRequest);
-                var authenticationToken = _jwtTokenService.GenerateNewToken(account);
-                return Ok(new { AuthorizationToken = authenticationToken });
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Account - Authenticate - POST");
-            }
+            var account = await _userManager.AuthenticateAsync(authenticateRequest);
+            var authenticationToken = _jwtTokenService.GenerateNewToken(account);
+            return Ok(new { AuthorizationToken = authenticationToken });
         }
 
         private string GetEmailConfirmationUrl(Guid userId, string emailConfirmationToken)

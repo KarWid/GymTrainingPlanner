@@ -1,4 +1,4 @@
-namespace GymTrainingPlanner.Api
+﻿namespace GymTrainingPlanner.Api
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -21,9 +21,12 @@ namespace GymTrainingPlanner.Api
 
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             Configuration = configuration;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IConfiguration Configuration { get; }
@@ -54,7 +57,7 @@ namespace GymTrainingPlanner.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<AppRoleEntity> roleManager /*, ILoggerFactory loggerFactory*/)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<AppRoleEntity> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -71,6 +74,7 @@ namespace GymTrainingPlanner.Api
             app.UseRouting();
 
             //app.UseWhiteListMiddleware(Configuration["AllowedIPs"]);
+            app.UseErrorHandlingMiddleware();
 
             //app.UseDefaultFiles();
             //app.UseStaticFiles();
@@ -78,7 +82,7 @@ namespace GymTrainingPlanner.Api
             app.UseAuthentication();
             app.UseAuthorization();
 
-            IdentityDataInitializer.SeedData(roleManager);
+            IdentityDataInitializer.SeedData(roleManager, _webHostEnvironment.IsProduction());
 
             app.UseEndpoints(endpoints =>
             {
@@ -98,7 +102,8 @@ namespace GymTrainingPlanner.Api
             services.AddJwtAuthorization(Configuration);
             services.AddDbContext();
             services.ConfigureMapper();
-            services.AddLogging();
+            services.AddSingleton<ILoggerService, LoggerService>();
+            //services.AddLogging();
             services.ConfigureSmtpClient();
 
             services.AddTransient<CustomEmailConfirmationTokenProvider<AppUserEntity>>();

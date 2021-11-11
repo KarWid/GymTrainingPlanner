@@ -22,7 +22,6 @@
     {
         public T Result { get; }
 
-        //TODO @KWidla: change tokens - use userId
         public ApiResponse(T result, ResponseStatus status, List<string> errors) : base(status, errors)
         {
             Result = result;

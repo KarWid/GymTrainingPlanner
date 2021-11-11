@@ -1,5 +1,6 @@
 ﻿namespace GymTrainingPlanner.Common.Managers.V1
 {
+    using System;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
@@ -17,10 +18,9 @@
         /// <summary>
         /// Creates an account based on model and returns email confirmation token.
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="emailConfirmationToken"></param>
+        /// <param name="registerAccountRequest"></param>
         /// <returns></returns>
-        Task<RegisterAccountResponse> CreateUserAccountAsync(RegisterAccountRequest model);
+        Task<RegisterAccountResponse> CreateUserAccountAsync(RegisterAccountRequest registerAccountRequest);
         
         /// <summary>
         /// Sends confirmation email with confirmation url to a user's email defined by userEmail.
@@ -39,23 +39,25 @@
         Task<bool> ConfirmEmailAsync(string email, string confirmationToken);
 
         /// <summary>
-        /// 
+        /// Determines if authentication succeeded.
         /// </summary>
-        /// <returns>Determines if authentication succeeded.</returns>
+        /// <param name="model"></param>
+        /// <returns>Account information.</returns>
         Task<UserAccount> AuthenticateAsync(AuthenticateRequest model);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="claimsPrincipal"></param>
-        /// <returns></returns>
+        /// <returns>User account with user's roles.</returns>
         Task<UserAccount> GetUserAsync(ClaimsPrincipal claimsPrincipal);
 
         /// <summary>
         /// 
         /// </summary>
-        /// <returns>Logouts a current user.</returns>
-        Task SignOut();
+        /// <param name="userId">Account Id.</param>
+        /// <returns>User account with user's roles.</returns>
+        Task<UserAccount> GetUserAsync(Guid userId);
     }
 
     public class AppUserManager : IUserManager
@@ -148,6 +150,7 @@
             return await GetUserAccountAsync(appUserEntity);
         }
 
+        /// <inheritdoc cref="IUserManager"/>
         public async Task<UserAccount> GetUserAsync(ClaimsPrincipal claimsPrincipal)
         {
             var userId = claimsPrincipal.Claims.FirstOrDefault(_ => _.Type == ClaimTypes.NameIdentifier).Value;
@@ -156,20 +159,21 @@
                 return null;
             }
 
-            var userAccountEntity = await _identityUserManager.FindByIdAsync(userId);
+            return await GetUserAsync(new Guid(userId));
+        }
+
+        /// <inheritdoc cref="IUserManager"/>
+        public async Task<UserAccount> GetUserAsync(Guid userId)
+        {
+            var userAccountEntity = await _identityUserManager.FindByIdAsync(userId.ToString());
             if (userAccountEntity == null)
             {
-                return null;
+                throw new NotFoundApiManagerException(GeneralResource.Account_NotFound);
             }
 
             return await GetUserAccountAsync(userAccountEntity);
         }
 
-        /// <inheritdoc cref="IUserManager"/>
-        public async Task SignOut()
-        {
-            await _signInManager.SignOutAsync();
-        }
         #endregion
 
         #region Private Methods
